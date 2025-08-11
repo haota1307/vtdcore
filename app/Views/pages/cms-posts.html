@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="disable">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Posts Management | CMS - Velzon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Posts Management - Content Management System" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="assets/images/favicon.ico">
+
+    <!-- Layout config Js -->
+    <script src="assets/js/layout.js"></script>
+    <!-- Bootstrap Css -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="assets/css/app.min.css" rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href="assets/css/custom.min.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <!-- Begin page -->
+    <div id="layout-wrapper">
+
+        <header id="page-topbar">
+            <div class="layout-width">
+                <div class="navbar-header">
+                    <div class="d-flex">
+                        <!-- LOGO -->
+                        <div class="navbar-brand-box horizontal-logo">
+                            <a href="cms-dashboard.html" class="logo logo-dark">
+                                <span class="logo-sm">
+                                    <img src="assets/images/logo-sm.png" alt="" height="22">
+                                </span>
+                                <span class="logo-lg">
+                                    <img src="assets/images/logo-dark.png" alt="" height="17">
+                                </span>
+                            </a>
+
+                            <a href="cms-dashboard.html" class="logo logo-light">
+                                <span class="logo-sm">
+                                    <img src="assets/images/logo-sm.png" alt="" height="22">
+                                </span>
+                                <span class="logo-lg">
+                                    <img src="assets/images/logo-light.png" alt="" height="17">
+                                </span>
+                            </a>
+                        </div>
+
+                        <button type="button" class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger shadow-none" id="topnav-hamburger-icon">
+                            <span class="hamburger-icon">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
+                        </button>
+
+                        <!-- App Search-->
+                        <form class="app-search d-none d-md-block">
+                            <div class="position-relative">
+                                <input type="text" class="form-control" placeholder="Search posts..." autocomplete="off" id="search-options" value="">
+                                <span class="mdi mdi-magnify search-widget-icon"></span>
+                                <span class="mdi mdi-close-circle search-widget-icon search-widget-icon-close d-none" id="search-close-options"></span>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="d-flex align-items-center">
+                        <div class="dropdown d-inline-block user-dropdown">
+                            <button type="button" class="btn header-item" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-1.jpg" alt="Header Avatar">
+                                <span class="d-none d-xl-inline-block ms-1" key="t-henry">Admin</span>
+                                <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="cms-profile.html"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span key="t-profile">My Profile</span></a>
+                                <a class="dropdown-item" href="cms-settings.html"><i class="mdi mdi-cog text-muted fs-16 align-middle me-1"></i> <span key="t-settings">Settings</span></a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="auth-signin-basic.html"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span key="t-logout">Logout</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- ========== Left Sidebar Start ========== -->
+        <div class="vertical-menu">
+            <div data-simplebar class="h-100">
+                <div id="sidebar-menu">
+                    <ul class="metismenu list-unstyled" id="side-menu">
+                        <li class="menu-title" data-key="t-menu">CMS</li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="cms-dashboard.html">
+                                <i class="mdi mdi-view-dashboard"></i> <span data-key="t-dashboard">Dashboard</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarContent" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarContent">
+                                <i class="mdi mdi-file-document-outline"></i> <span data-key="t-content">Content</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="sidebarContent">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="cms-posts.html" class="nav-link active" data-key="t-posts">Posts</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="cms-pages.html" class="nav-link" data-key="t-pages">Pages</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="cms-categories.html" class="nav-link" data-key="t-categories">Categories</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="cms-media.html" class="nav-link" data-key="t-media">Media Library</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarUsers" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarUsers">
+                                <i class="mdi mdi-account-group-outline"></i> <span data-key="t-users">Users</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="sidebarUsers">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="cms-users.html" class="nav-link" data-key="t-all-users">All Users</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="cms-roles.html" class="nav-link" data-key="t-roles">Roles & Permissions</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="#sidebarSettings" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarSettings">
+                                <i class="mdi mdi-cog-outline"></i> <span data-key="t-settings">Settings</span>
+                            </a>
+                            <div class="collapse menu-dropdown" id="sidebarSettings">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="cms-general-settings.html" class="nav-link" data-key="t-general">General</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="cms-appearance.html" class="nav-link" data-key="t-appearance">Appearance</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="cms-seo.html" class="nav-link" data-key="t-seo">SEO</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="cms-comments.html">
+                                <i class="mdi mdi-comment-outline"></i> <span data-key="t-comments">Comments</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link menu-link" href="cms-analytics.html">
+                                <i class="mdi mdi-chart-line"></i> <span data-key="t-analytics">Analytics</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Left Sidebar End -->
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+        <div class="main-content">
+            <div class="page-content">
+                <div class="container-fluid">
+
+                    <!-- start page title -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                                <h4 class="mb-sm-0">Posts Management</h4>
+
+                                <div class="page-title-right">
+                                    <ol class="breadcrumb m-0">
+                                        <li class="breadcrumb-item"><a href="cms-dashboard.html">CMS</a></li>
+                                        <li class="breadcrumb-item"><a href="javascript: void(0);">Content</a></li>
+                                        <li class="breadcrumb-item active">Posts</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- end page title -->
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row g-4 align-items-center">
+                                        <div class="col-sm">
+                                            <div>
+                                                <h5 class="card-title mb-0">Posts List</h5>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-auto">
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPostModal">
+                                                    <i class="ri-add-line align-bottom me-1"></i> Add New Post
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="row g-4 mb-4">
+                                        <div class="col-sm">
+                                            <div class="d-flex">
+                                                <h5 class="card-title mb-0">Posts</h5>
+                                                <div class="dropdown ms-auto">
+                                                    <a class="text-body" href="#" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        <i class="mdi mdi-dots-horizontal"></i>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <a class="dropdown-item" href="#"><i class="mdi mdi-pencil me-1"></i>Edit</a>
+                                                        <a class="dropdown-item" href="#"><i class="mdi mdi-delete me-1"></i>Delete</a>
+                                                        <a class="dropdown-item" href="#"><i class="mdi mdi-eye me-1"></i>View</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-auto">
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <button class="btn btn-soft-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                                    <i class="ri-filter-2-line align-bottom me-1"></i> Filters
+                                                </button>
+                                                <div class="search-box">
+                                                    <input type="text" class="form-control" placeholder="Search posts...">
+                                                    <i class="ri-search-line search-icon"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-borderless table-centered align-middle table-nowrap mb-0">
+                                            <thead class="text-muted table-light">
+                                                <tr>
+                                                    <th scope="col" style="width: 50px;">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="checkAll">
+                                                        </div>
+                                                    </th>
+                                                    <th scope="col">Post</th>
+                                                    <th scope="col">Author</th>
+                                                    <th scope="col">Category</th>
+                                                    <th scope="col">Status</th>
+                                                    <th scope="col">Date</th>
+                                                    <th scope="col" style="width: 150px;">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="check1">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="flex-shrink-0 me-3">
+                                                                <img src="assets/images/small/img-1.jpg" alt="" class="avatar-sm rounded">
+                                                            </div>
+                                                            <div class="flex-grow-1">
+                                                                <h6 class="fs-14 mb-0"><a href="#" class="text-reset">Getting Started with CMS</a></h6>
+                                                                <p class="text-muted mb-0">Learn how to manage your content effectively...</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="assets/images/users/avatar-1.jpg" alt="" class="avatar-xs rounded-circle me-2">
+                                                            <span>Admin</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-soft-primary text-primary">Technology</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-success-subtle text-success">Published</span>
+                                                    </td>
+                                                    <td>Jan 15, 2024</td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <a href="#" class="btn btn-soft-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                Actions <i class="mdi mdi-chevron-down"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="check2">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="flex-shrink-0 me-3">
+                                                                <img src="assets/images/small/img-2.jpg" alt="" class="avatar-sm rounded">
+                                                            </div>
+                                                            <div class="flex-grow-1">
+                                                                <h6 class="fs-14 mb-0"><a href="#" class="text-reset">Content Management Best Practices</a></h6>
+                                                                <p class="text-muted mb-0">Essential tips for effective content management...</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="assets/images/users/avatar-2.jpg" alt="" class="avatar-xs rounded-circle me-2">
+                                                            <span>John Doe</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-soft-success text-success">Business</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-success-subtle text-success">Published</span>
+                                                    </td>
+                                                    <td>Jan 14, 2024</td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <a href="#" class="btn btn-soft-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                Actions <i class="mdi mdi-chevron-down"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="check3">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="flex-shrink-0 me-3">
+                                                                <img src="assets/images/small/img-3.jpg" alt="" class="avatar-sm rounded">
+                                                            </div>
+                                                            <div class="flex-grow-1">
+                                                                <h6 class="fs-14 mb-0"><a href="#" class="text-reset">SEO Optimization Guide</a></h6>
+                                                                <p class="text-muted mb-0">Complete guide to optimize your content for search engines...</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="assets/images/users/avatar-3.jpg" alt="" class="avatar-xs rounded-circle me-2">
+                                                            <span>Jane Smith</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-soft-warning text-warning">Marketing</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-warning-subtle text-warning">Draft</span>
+                                                    </td>
+                                                    <td>Jan 13, 2024</td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <a href="#" class="btn btn-soft-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                Actions <i class="mdi mdi-chevron-down"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="check4">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="flex-shrink-0 me-3">
+                                                                <img src="assets/images/small/img-4.jpg" alt="" class="avatar-sm rounded">
+                                                            </div>
+                                                            <div class="flex-grow-1">
+                                                                <h6 class="fs-14 mb-0"><a href="#" class="text-reset">Web Design Trends 2024</a></h6>
+                                                                <p class="text-muted mb-0">Explore the latest trends in web design...</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="assets/images/users/avatar-4.jpg" alt="" class="avatar-xs rounded-circle me-2">
+                                                            <span>Mike Johnson</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-soft-info text-info">Design</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-success-subtle text-success">Published</span>
+                                                    </td>
+                                                    <td>Jan 12, 2024</td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <a href="#" class="btn btn-soft-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                Actions <i class="mdi mdi-chevron-down"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="checkbox" id="check5">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="flex-shrink-0 me-3">
+                                                                <img src="assets/images/small/img-5.jpg" alt="" class="avatar-sm rounded">
+                                                            </div>
+                                                            <div class="flex-grow-1">
+                                                                <h6 class="fs-14 mb-0"><a href="#" class="text-reset">Digital Marketing Strategies</a></h6>
+                                                                <p class="text-muted mb-0">Effective strategies for digital marketing success...</p>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="assets/images/users/avatar-5.jpg" alt="" class="avatar-xs rounded-circle me-2">
+                                                            <span>Sarah Wilson</span>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-soft-danger text-danger">Marketing</span>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge bg-danger-subtle text-danger">Pending</span>
+                                                    </td>
+                                                    <td>Jan 11, 2024</td>
+                                                    <td>
+                                                        <div class="dropdown">
+                                                            <a href="#" class="btn btn-soft-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                Actions <i class="mdi mdi-chevron-down"></i>
+                                                            </a>
+                                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-eye-fill align-bottom me-2 text-muted"></i> View</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-pencil-fill align-bottom me-2 text-muted"></i> Edit</a></li>
+                                                                <li><a class="dropdown-item" href="#"><i class="ri-delete-bin-fill align-bottom me-2 text-muted"></i> Delete</a></li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="row align-items-center mt-4">
+                                        <div class="col-sm">
+                                            <div class="text-muted">Showing <span class="fw-semibold">5</span> of <span class="fw-semibold">25</span> results</div>
+                                        </div>
+                                        <div class="col-sm-auto">
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-soft-secondary" disabled>
+                                                    <i class="ri-arrow-left-s-line"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-primary">1</button>
+                                                <button class="btn btn-sm btn-soft-secondary">2</button>
+                                                <button class="btn btn-sm btn-soft-secondary">3</button>
+                                                <button class="btn btn-sm btn-soft-secondary">
+                                                    <i class="ri-arrow-right-s-line"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Post Modal -->
+        <div class="modal fade" id="addPostModal" tabindex="-1" aria-labelledby="addPostModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addPostModalLabel">Add New Post</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label for="postTitle" class="form-label">Post Title</label>
+                                        <input type="text" class="form-control" id="postTitle" placeholder="Enter post title">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="postContent" class="form-label">Content</label>
+                                        <textarea class="form-control" id="postContent" rows="10" placeholder="Write your content here..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="postCategory" class="form-label">Category</label>
+                                        <select class="form-select" id="postCategory">
+                                            <option value="">Select Category</option>
+                                            <option value="technology">Technology</option>
+                                            <option value="business">Business</option>
+                                            <option value="design">Design</option>
+                                            <option value="marketing">Marketing</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="postStatus" class="form-label">Status</label>
+                                        <select class="form-select" id="postStatus">
+                                            <option value="draft">Draft</option>
+                                            <option value="published">Published</option>
+                                            <option value="pending">Pending Review</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="featuredImage" class="form-label">Featured Image</label>
+                                        <input type="file" class="form-control" id="featuredImage">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="postTags" class="form-label">Tags</label>
+                                        <input type="text" class="form-control" id="postTags" placeholder="Enter tags separated by commas">
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="allowComments">
+                                            <label class="form-check-label" for="allowComments">
+                                                Allow Comments
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary">Save Post</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Modal -->
+        <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="filterModalLabel">Filter Posts</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="filterStatus" class="form-label">Status</label>
+                                <select class="form-select" id="filterStatus">
+                                    <option value="">All Status</option>
+                                    <option value="published">Published</option>
+                                    <option value="draft">Draft</option>
+                                    <option value="pending">Pending</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="filterCategory" class="form-label">Category</label>
+                                <select class="form-select" id="filterCategory">
+                                    <option value="">All Categories</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="business">Business</option>
+                                    <option value="design">Design</option>
+                                    <option value="marketing">Marketing</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="filterAuthor" class="form-label">Author</label>
+                                <select class="form-select" id="filterAuthor">
+                                    <option value="">All Authors</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="john">John Doe</option>
+                                    <option value="jane">Jane Smith</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="filterDate" class="form-label">Date Range</label>
+                                <input type="text" class="form-control" id="filterDate" placeholder="Select date range">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary">Apply Filters</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JAVASCRIPT -->
+        <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="assets/libs/simplebar/simplebar.min.js"></script>
+        <script src="assets/libs/node-waves/waves.min.js"></script>
+        <script src="assets/libs/feather-icons/feather.min.js"></script>
+        <script src="assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+        <script src="assets/js/plugins.js"></script>
+        <script src="assets/js/app.js"></script>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="E:\vtdcore\phpunit.xml.dist" tests="1" assertions="0" errors="0" failures="0" skipped="1" time="0.000000">
+    <testsuite name="App" tests="1" assertions="0" errors="0" failures="0" skipped="1" time="0.000000">
+      <testsuite name="MediaChunkUploadTest" file="E:\vtdcore\tests\unit\Media\MediaChunkUploadTest.php" tests="1" assertions="0" errors="0" failures="0" skipped="1" time="0.000000">
+        <testcase name="testChunkUploadFlow" file="E:\vtdcore\tests\unit\Media\MediaChunkUploadTest.php" line="29" class="MediaChunkUploadTest" classname="MediaChunkUploadTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

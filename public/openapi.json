@@ -1,0 +1,12 @@
+{
+  "openapi": "3.0.0",
+  "info": {"title": "Core API","version": "0.1.0"},
+  "paths": {
+    "/auth/login": {"post": {"summary": "Login"}},
+    "/auth/register": {"post": {"summary": "Register"}},
+    "/auth/me": {"get": {"summary": "Current user"}},
+    "/auth/tokens": {"post": {"summary": "Issue token"}},
+    "/media/upload": {"post": {"summary": "Upload media"}},
+    "/media/list": {"get": {"summary": "List media (bearer ability media.read)"}}
+  }
+}
