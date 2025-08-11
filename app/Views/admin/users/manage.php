@@ -95,9 +95,9 @@
                                     </div>
                                     <div class="col-sm-auto">
                                         <div class="d-flex flex-wrap gap-2">
-                                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                            <a href="<?= admin_url('users/create') ?>" class="btn btn-success">
                                                 <i class="ri-add-line align-bottom me-1"></i> Add New User
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

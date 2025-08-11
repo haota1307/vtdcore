@@ -12,7 +12,7 @@ class UsersController extends AdminBaseController
         $model = new \App\Models\UserModel();
         $data = $this->paginate($model, 25);
         
-        return $this->render('users/manage', [
+        return $this->render('users/index', [
             'title' => 'Users Management',
             'users' => $data['items'],
             'meta' => $data['pager'],
@@ -20,26 +20,130 @@ class UsersController extends AdminBaseController
         ]);
     }
 
+    public function createForm()
+    {
+        if ($resp = $this->guardManage()) return $resp;
+        
+        return $this->render('users/create', [
+            'title' => 'Thêm người dùng mới',
+        ]);
+    }
+
     public function create()
     {
         if ($resp = $this->guardManage()) return $resp;
         
-        $data = $this->request->getJSON(true) ?? $this->request->getPost();
+        // Check if this is a JSON request
+        $contentType = $this->request->getHeaderLine('Content-Type');
+        $isJsonRequest = strpos($contentType, 'application/json') !== false;
+        
+        // Debug logging
+        log_message('debug', 'UsersController::create - Content-Type: ' . $contentType);
+        log_message('debug', 'UsersController::create - Is JSON: ' . ($isJsonRequest ? 'yes' : 'no'));
+        
+        if ($isJsonRequest) {
+            try {
+                $data = $this->request->getJSON(true);
+                if ($data === null) {
+                    // Try to get raw input and decode manually
+                    $rawInput = $this->request->getBody();
+                    if (!empty($rawInput)) {
+                        $data = json_decode($rawInput, true);
+                        if (json_last_error() !== JSON_ERROR_NONE) {
+                            throw new \Exception('JSON decode error: ' . json_last_error_msg());
+                        }
+                    } else {
+                        $data = [];
+                    }
+                }
+            } catch (\Exception $e) {
+                log_message('error', 'JSON parsing error in UsersController::create: ' . $e->getMessage());
+                return $this->response->setJSON(['error' => 'Invalid JSON data: ' . $e->getMessage()])->setStatusCode(400);
+            }
+        } else {
+            $data = $this->request->getPost();
+            // Fallback: if POST is empty, try to get from request body
+            if (empty($data)) {
+                $rawInput = $this->request->getBody();
+                if (!empty($rawInput)) {
+                    parse_str($rawInput, $data);
+                }
+            }
+        }
+        
+        $isFormSubmission = !$isJsonRequest;
+        
+        // Debug logging
+        log_message('debug', 'UsersController::create - Data received: ' . json_encode($data));
+        log_message('debug', 'UsersController::create - Is form submission: ' . ($isFormSubmission ? 'yes' : 'no'));
         
         // Validation
-        if (empty($data['username']) || empty($data['email']) || empty($data['password'])) {
-            return $this->response->setJSON(['error' => 'Username, email and password are required'])->setStatusCode(400);
+        $errors = [];
+        
+        if (!$data || !is_array($data)) {
+            if ($isFormSubmission) {
+                return $this->render('users/create', [
+                    'title' => 'Thêm người dùng mới',
+                    'errors' => ['general' => 'Dữ liệu không hợp lệ'],
+                ]);
+            }
+            return $this->response->setJSON(['error' => 'No data provided'])->setStatusCode(400);
+        }
+        
+        if (empty($data['username'])) {
+            $errors['username'] = 'Tên đăng nhập là bắt buộc';
+        } elseif (strlen($data['username']) < 3) {
+            $errors['username'] = 'Tên đăng nhập phải có ít nhất 3 ký tự';
+        }
+        
+        if (empty($data['email'])) {
+            $errors['email'] = 'Email là bắt buộc';
+        } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = 'Email không hợp lệ';
+        }
+        
+        if (empty($data['password'])) {
+            $errors['password'] = 'Mật khẩu là bắt buộc';
+        } elseif (strlen($data['password']) < 8) {
+            $errors['password'] = 'Mật khẩu phải có ít nhất 8 ký tự';
+        }
+        
+        if (!empty($errors)) {
+            if ($isFormSubmission) {
+                return $this->render('users/create', [
+                    'title' => 'Thêm người dùng mới',
+                    'errors' => $errors,
+                    'old_data' => $data
+                ]);
+            }
+            return $this->response->setJSON(['errors' => $errors])->setStatusCode(400);
         }
         
         $model = new \App\Models\UserModel();
         
         // Check if username or email already exists
         if ($model->where('username', $data['username'])->first()) {
-            return $this->response->setJSON(['error' => 'Username already exists'])->setStatusCode(400);
+            $error = 'Tên đăng nhập đã tồn tại';
+            if ($isFormSubmission) {
+                return $this->render('users/create', [
+                    'title' => 'Thêm người dùng mới',
+                    'errors' => ['username' => $error],
+                    'old_data' => $data
+                ]);
+            }
+            return $this->response->setJSON(['error' => $error])->setStatusCode(400);
         }
         
         if ($model->where('email', $data['email'])->first()) {
-            return $this->response->setJSON(['error' => 'Email already exists'])->setStatusCode(400);
+            $error = 'Email đã tồn tại';
+            if ($isFormSubmission) {
+                return $this->render('users/create', [
+                    'title' => 'Thêm người dùng mới',
+                    'errors' => ['email' => $error],
+                    'old_data' => $data
+                ]);
+            }
+            return $this->response->setJSON(['error' => $error])->setStatusCode(400);
         }
         
         // Create user
@@ -54,6 +158,11 @@ class UsersController extends AdminBaseController
         
         if (function_exists('audit_event')) {
             audit_event('user.create', ['id' => $userId, 'username' => $data['username']]);
+        }
+        
+        if ($isFormSubmission) {
+            session()->setFlashdata('success', 'Người dùng đã được tạo thành công');
+            return redirect()->to(admin_url('users'));
         }
         
         return $this->response->setJSON(['success' => true, 'user_id' => $userId]);

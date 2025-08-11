@@ -94,6 +94,7 @@ $routes->group('admin', static function($routes){
 	$routes->group('', ['filter'=>['auth','twofactor']], static function($routes){
 		$routes->get('/', 'Admin\\DashboardController::index');
 		$routes->get('users', 'Admin\\UsersController::index', ['filter'=>'can:admin.users.view']);
+		$routes->get('users/create', 'Admin\\UsersController::createForm', ['filter'=>'can:admin.users.manage']);
 		$routes->post('users', 'Admin\\UsersController::create', ['filter'=>'can:admin.users.manage']);
 		$routes->get('users/(:num)', 'Admin\\UsersController::show/$1', ['filter'=>'can:admin.users.manage']);
 		$routes->put('users/(:num)', 'Admin\\UsersController::update/$1', ['filter'=>'can:admin.users.manage']);

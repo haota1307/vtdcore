@@ -100,6 +100,6 @@ class MediaController extends AdminBaseController
         if (class_exists('App\\Services\\AuditService')) {
             service('audit')->log('media.rescan', ['media_id'=>$id,'result'=>$status]);
         }
-        return $this->respond(['id'=>$id,'scan_status'=>$status]);
+        return service('response')->setJSON(['id' => $id, 'scan_status' => $status]);
     }
 }
