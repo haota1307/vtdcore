@@ -5,7 +5,7 @@ use App\Models\AuditLogModel;
 
 class AuditLogsController extends AdminBaseController
 {
-    protected ?string $requiredPermission = 'audit.view';
+    protected ?string $requiredPermission = 'admin.audit.view';
 
     public function index()
     {
