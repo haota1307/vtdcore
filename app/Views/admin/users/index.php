@@ -333,6 +333,72 @@
 
 
 
+        <!-- View User Modal -->
+        <div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="viewUserModalLabel">Chi tiết người dùng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-2"><strong>ID:</strong> <span id="viewUserId">-</span></div>
+                        <div class="mb-2"><strong>Tên đăng nhập:</strong> <span id="viewUsername">-</span></div>
+                        <div class="mb-2"><strong>Email:</strong> <span id="viewEmail">-</span></div>
+                        <div class="mb-2"><strong>Trạng thái:</strong> <span id="viewStatus" class="badge bg-secondary-subtle text-secondary">-</span></div>
+                        <div class="mb-2"><strong>Tạo lúc:</strong> <span id="viewCreatedAt">-</span></div>
+                        <div class="mb-0"><strong>Đăng nhập gần nhất:</strong> <span id="viewLastLogin">-</span></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit User Modal -->
+        <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editUserModalLabel">Chỉnh sửa người dùng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="editUserForm">
+                        <input type="hidden" id="editUserId" name="id">
+                        <div class="modal-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="editUsername" name="username" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="editEmail" name="email" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Mật khẩu (để trống nếu không đổi)</label>
+                                    <input type="password" class="form-control" id="editPassword" name="password" placeholder="Để trống để giữ nguyên">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Trạng thái</label>
+                                    <select class="form-select" id="editStatus" name="status">
+                                        <option value="active">Hoạt động</option>
+                                        <option value="disabled">Không hoạt động</option>
+                                        <option value="inactive">Không hoạt động</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-primary" id="editSubmitBtn">Cập nhật</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
 <style>
 /* Card thống kê */
 .stats-card {
@@ -619,6 +685,10 @@
 }
 </style>
 
+<!-- Ensure required JS libraries are available -->
+<script src="<?= base_url('assets/libs/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
+<script src="<?= base_url('assets/libs/feather-icons/feather.min.js') ?>"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Khởi tạo Feather Icons
@@ -697,13 +767,57 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Xem chi tiết người dùng
-function viewUser(id) {
-    showNotification('Tính năng xem chi tiết đang được phát triển', 'info');
+async function viewUser(id) {
+    try {
+        const response = await fetch(`<?= admin_url('users') ?>/${id}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        if (!response.ok) throw new Error('Không thể tải chi tiết người dùng')
+        const { user } = await response.json()
+
+        // Bind data to modal
+        document.getElementById('viewUserId').textContent = user.id ?? '-'
+        document.getElementById('viewUsername').textContent = user.username ?? '-'
+        document.getElementById('viewEmail').textContent = user.email ?? '-'
+        const statusEl = document.getElementById('viewStatus')
+        const isActive = (user.status ?? 'active') === 'active'
+        statusEl.textContent = isActive ? 'Hoạt động' : 'Không hoạt động'
+        statusEl.className = 'badge ' + (isActive ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary')
+        document.getElementById('viewCreatedAt').textContent = user.created_at ?? '-'
+        document.getElementById('viewLastLogin').textContent = user.last_login_at ?? 'Chưa đăng nhập'
+
+        const modal = new bootstrap.Modal(document.getElementById('viewUserModal'))
+        modal.show()
+    } catch (error) {
+        console.error(error)
+        showNotification('Không thể tải chi tiết người dùng', 'error')
+    }
 }
 
 // Chỉnh sửa người dùng
-function editUser(id) {
-    showNotification('Tính năng chỉnh sửa đang được phát triển', 'info');
+async function editUser(id) {
+    try {
+        const response = await fetch(`<?= admin_url('users') ?>/${id}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        if (!response.ok) throw new Error('Không thể tải dữ liệu người dùng')
+        const { user } = await response.json()
+
+        // Bind to form
+        document.getElementById('editUserId').value = user.id
+        document.getElementById('editUsername').value = user.username ?? ''
+        document.getElementById('editEmail').value = user.email ?? ''
+        document.getElementById('editStatus').value = user.status ?? 'active'
+        document.getElementById('editPassword').value = ''
+
+        const modal = new bootstrap.Modal(document.getElementById('editUserModal'))
+        modal.show()
+    } catch (error) {
+        console.error(error)
+        showNotification('Không thể tải dữ liệu người dùng', 'error')
+    }
 }
 
 // Toggle trạng thái người dùng
@@ -760,6 +874,53 @@ function deleteUser(id) {
     
     showNotification('Tính năng xóa người dùng đang được phát triển', 'info');
 }
+
+// Submit form chỉnh sửa người dùng
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('editUserForm')
+    if (!form) return
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault()
+        const userId = document.getElementById('editUserId').value
+        const payload = {
+            username: document.getElementById('editUsername').value.trim(),
+            email: document.getElementById('editEmail').value.trim(),
+            status: document.getElementById('editStatus').value,
+        }
+        const password = document.getElementById('editPassword').value
+        if (password && password.length > 0) payload.password = password
+
+        const submitBtn = document.getElementById('editSubmitBtn')
+        const originalHtml = submitBtn.innerHTML
+        submitBtn.disabled = true
+        submitBtn.innerHTML = '<i data-feather="loader" class="icon-xs me-1 spinner"></i> Đang lưu...'
+        if (typeof feather !== 'undefined') feather.replace()
+
+        try {
+            const response = await fetch(`<?= admin_url('users') ?>/${userId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}))
+                throw new Error(err.error || 'Cập nhật thất bại')
+            }
+            showNotification('Cập nhật người dùng thành công', 'success')
+            const modalEl = document.getElementById('editUserModal')
+            const modal = bootstrap.Modal.getInstance(modalEl)
+            if (modal) modal.hide()
+            setTimeout(() => location.reload(), 1000)
+        } catch (error) {
+            console.error(error)
+            showNotification(error.message || 'Cập nhật thất bại', 'error')
+        } finally {
+            submitBtn.disabled = false
+            submitBtn.innerHTML = originalHtml
+            if (typeof feather !== 'undefined') feather.replace()
+        }
+    })
+})
 
 // Hiển thị thông báo
         function showNotification(message, type = 'info') {
