@@ -119,8 +119,10 @@ $routes->group('admin', static function($routes){
 		$routes->post('roles/(:num)/import-users', 'Admin\\RolesController::importUsers/$1', ['filter'=>'can:admin.roles.manage']);
 		$routes->post('roles/(:num)/bulk-remove-users', 'Admin\\RolesController::bulkRemoveUsers/$1', ['filter'=>'can:admin.roles.manage']);
 		$routes->get('media', 'Admin\\MediaController::index', ['filter'=>'can:admin.media.manage']);
+		$routes->get('media/upload', 'Admin\\MediaController::uploadForm', ['filter'=>'can:admin.media.manage']);
 		$routes->get('settings', 'Admin\\SettingsController::index', ['filter'=>'can:admin.settings.manage']);
 		$routes->get('audit', 'Admin\\AuditLogsController::index', ['filter'=>'can:admin.audit.view']);
+		$routes->get('logs', 'Admin\\AuditLogsController::index', ['filter'=>'can:admin.audit.view']);
 		
 		// Sidebar Demo Routes
 		$routes->get('sidebar-demo', 'Admin\\SidebarDemoController::index');

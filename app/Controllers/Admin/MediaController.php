@@ -102,4 +102,13 @@ class MediaController extends AdminBaseController
         }
         return service('response')->setJSON(['id' => $id, 'scan_status' => $status]);
     }
+
+    public function uploadForm()
+    {
+        if ($resp = $this->guard('admin.media.manage')) return $resp;
+        
+        return $this->render('media/upload', [
+            'title' => 'Tải lên Media',
+        ]);
+    }
 }
