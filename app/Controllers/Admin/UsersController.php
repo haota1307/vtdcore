@@ -291,4 +291,119 @@ class UsersController extends AdminBaseController
     {
         return view('admin/users/test-dropdown');
     }
+    
+    public function exportToExcel()
+    {
+        if ($resp = $this->guardManage()) return $resp;
+        
+        // Lấy tất cả người dùng từ database
+        $model = new \App\Models\UserModel();
+        $users = $model->findAll();
+        
+        // Áp dụng bộ lọc nếu có
+        $status = $this->request->getPost('status');
+        $search = $this->request->getPost('search');
+        
+        if (!empty($status) || !empty($search)) {
+            $filteredUsers = [];
+            foreach ($users as $user) {
+                $matchStatus = empty($status) || (($user['status'] ?? 'active') === 'active' && $status === 'active') || 
+                              (($user['status'] ?? 'active') !== 'active' && $status === 'inactive');
+                
+                $matchSearch = empty($search) || 
+                              (stripos($user['username'] ?? '', $search) !== false) || 
+                              (stripos($user['email'] ?? '', $search) !== false);
+                
+                if ($matchStatus && $matchSearch) {
+                    $filteredUsers[] = $user;
+                }
+            }
+            $users = $filteredUsers;
+        }
+        
+        // Tạo tên file với định dạng Excel
+        $filename = 'danh-sach-nguoi-dung-' . date('Y-m-d-H-i-s') . '.xls';
+        
+        // Set header để Excel nhận diện đúng
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+        
+        // Tạo HTML cho file Excel
+        echo '<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Danh sách người dùng</title>
+            <style>
+                table {
+                    border-collapse: collapse;
+                    width: 100%;
+                }
+                th, td {
+                    border: 1px solid #ddd;
+                    padding: 8px;
+                    text-align: left;
+                }
+                th {
+                    background-color: #f2f2f2;
+                    font-weight: bold;
+                }
+                .center {
+                    text-align: center;
+                }
+                .text-success {
+                    color: green;
+                }
+                .text-danger {
+                    color: red;
+                }
+            </style>
+        </head>
+        <body>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên đăng nhập</th>
+                        <th>Email</th>
+                        <th>Trạng thái</th>
+                        <th>Đăng nhập cuối</th>
+                        <th>Ngày tạo</th>
+                    </tr>
+                </thead>
+                <tbody>';
+        
+        // Thêm dữ liệu người dùng
+        foreach ($users as $user) {
+            $status = ($user['status'] ?? 'active') === 'active' ? 
+                '<span class="text-success">Hoạt động</span>' : 
+                '<span class="text-danger">Không hoạt động</span>';
+            
+            $lastLogin = !empty($user['last_login_at']) ? 
+                date('d/m/Y H:i', strtotime($user['last_login_at'])) : 
+                'Chưa đăng nhập';
+            
+            $createdAt = !empty($user['created_at']) ? 
+                date('d/m/Y H:i', strtotime($user['created_at'])) : 
+                'N/A';
+            
+            echo '<tr>
+                <td class="center">' . esc($user['id']) . '</td>
+                <td>' . esc($user['username'] ?? 'N/A') . '</td>
+                <td>' . esc($user['email'] ?? 'N/A') . '</td>
+                <td class="center">' . $status . '</td>
+                <td class="center">' . $lastLogin . '</td>
+                <td class="center">' . $createdAt . '</td>
+            </tr>';
+        }
+        
+        echo '</tbody>
+            </table>
+        </body>
+        </html>';
+        
+        exit;
+    }
 }

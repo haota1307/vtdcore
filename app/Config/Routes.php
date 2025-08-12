@@ -101,6 +101,7 @@ $routes->group('admin', static function($routes){
 		$routes->delete('users/(:num)', 'Admin\\UsersController::delete/$1', ['filter'=>'can:admin.users.manage']);
 		$routes->post('users/(:num)/toggle', 'Admin\\UsersController::toggle/$1', ['filter'=>'can:admin.users.manage']);
 		$routes->post('users/(:num)/reset-password', 'Admin\\UsersController::resetPassword/$1', ['filter'=>'can:admin.users.manage']);
+		$routes->post('users/export-excel', 'Admin\\UsersController::exportToExcel', ['filter'=>'can:admin.users.view']);
 		$routes->get('roles', 'Admin\\RolesController::index', ['filter'=>'can:admin.roles.view']);
 		$routes->post('roles', 'Admin\\RolesController::create', ['filter'=>'can:admin.roles.manage']);
 		$routes->get('roles/(:num)', 'Admin\\RolesController::show/$1', ['filter'=>'can:admin.roles.view']);

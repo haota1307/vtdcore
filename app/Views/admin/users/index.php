@@ -618,6 +618,16 @@
     display: block;
 }
 
+/* Hiệu ứng quay cho icon loading */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
 /* Icons */
 .icon-xs {
     width: 16px;
@@ -745,6 +755,85 @@ document.addEventListener('DOMContentLoaded', function() {
                 const isVisible = userName.includes(searchTerm) || userEmail.includes(searchTerm);
                 row.style.display = isVisible ? '' : 'none';
             });
+        });
+    }
+    
+    // Xử lý nút Xuất Excel
+    const exportBtn = document.getElementById('exportUsers');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', function() {
+            // Hiển thị thông báo đang xử lý
+            showNotification('Đang chuẩn bị file Excel...', 'info');
+            
+            // Thêm hiệu ứng loading cho nút
+            const originalHtml = exportBtn.innerHTML;
+            exportBtn.disabled = true;
+            exportBtn.innerHTML = '<i data-feather="loader" class="icon-xs me-1 spinner"></i> Đang xử lý...';
+            if (typeof feather !== 'undefined') feather.replace();
+            
+            // Thêm hiệu ứng quay cho icon
+            const spinner = exportBtn.querySelector('.spinner');
+            if (spinner) {
+                spinner.style.animation = 'spin 1s linear infinite';
+            }
+            
+            // Tạo một form ẩn để submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '<?= admin_url('users/export-excel') ?>';
+            
+            // Thêm các filter hiện tại vào form nếu cần
+            const statusFilter = document.getElementById('statusFilter');
+            if (statusFilter && statusFilter.value) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'status';
+                input.value = statusFilter.value;
+                form.appendChild(input);
+            }
+            
+            const searchValue = document.getElementById('searchUsers');
+            if (searchValue && searchValue.value) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'search';
+                input.value = searchValue.value;
+                form.appendChild(input);
+            }
+            
+            // Thêm CSRF token nếu cần
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            if (csrfToken) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = csrfToken.getAttribute('name');
+                input.value = csrfToken.getAttribute('content');
+                form.appendChild(input);
+            }
+            
+            // Thêm form vào body và submit
+            document.body.appendChild(form);
+            
+            try {
+                form.submit();
+                
+                // Khôi phục nút sau 2 giây
+                setTimeout(() => {
+                    exportBtn.disabled = false;
+                    exportBtn.innerHTML = originalHtml;
+                    if (typeof feather !== 'undefined') feather.replace();
+                }, 2000);
+                
+                showNotification('File Excel đã được tạo và đang tải xuống', 'success');
+            } catch (error) {
+                console.error('Lỗi khi xuất Excel:', error);
+                showNotification('Có lỗi xảy ra khi xuất Excel', 'error');
+                
+                // Khôi phục nút ngay lập tức nếu có lỗi
+                exportBtn.disabled = false;
+                exportBtn.innerHTML = originalHtml;
+                if (typeof feather !== 'undefined') feather.replace();
+            }
         });
     }
 
