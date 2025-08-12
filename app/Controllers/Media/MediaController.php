@@ -18,7 +18,8 @@ class MediaController extends ResourceController
 
     public function upload(): ResponseInterface
     {
-        $file = $this->request->getFile('file');
+        $req = service('request');
+        $file = $req->getFile('file');
         if (! $file) {
             return $this->failValidationErrors('Thiếu trường file "file"');
         }
@@ -36,8 +37,9 @@ class MediaController extends ResourceController
 
     public function chunkInit(): ResponseInterface
     {
-        $original = (string)$this->request->getPost('name');
-        $mime = (string)$this->request->getPost('mime');
+        $req = service('request');
+        $original = (string)$req->getPost('name');
+        $mime = (string)$req->getPost('mime');
         if ($original === '') return $this->failValidationErrors('Thiếu tên file');
         $id = bin2hex(random_bytes(8));
         $dir = WRITEPATH.'uploads'.DIRECTORY_SEPARATOR.'chunks'.DIRECTORY_SEPARATOR.$id;
@@ -48,10 +50,11 @@ class MediaController extends ResourceController
 
     public function chunkPut(): ResponseInterface
     {
-        $uploadId = (string)$this->request->getPost('upload_id');
-        $index = (int)$this->request->getPost('index');
-        $total = (int)$this->request->getPost('total');
-        $file = $this->request->getFile('chunk');
+        $req = service('request');
+        $uploadId = (string)$req->getPost('upload_id');
+        $index = (int)$req->getPost('index');
+        $total = (int)$req->getPost('total');
+        $file = $req->getFile('chunk');
         if ($uploadId===''||$total<1||!$file) return $this->failValidationErrors('Tham số không hợp lệ');
         $dir = WRITEPATH.'uploads'.DIRECTORY_SEPARATOR.'chunks'.DIRECTORY_SEPARATOR.$uploadId;
         if (!is_dir($dir)) return $this->failNotFound('ID upload không tồn tại');
@@ -104,8 +107,9 @@ class MediaController extends ResourceController
         if ($ownerId) {
             $model->where('owner_id',$ownerId);
         }
-        $limit = (int)($this->request->getGet('limit') ?? 25); $limit = min(max($limit,1),100);
-        $page = (int)($this->request->getGet('page') ?? 1); $page = max($page,1);
+        $req = service('request');
+        $limit = (int)($req->getGet('limit') ?? 25); $limit = min(max($limit,1),100);
+        $page = (int)($req->getGet('page') ?? 1); $page = max($page,1);
         $rows = $model->orderBy('id','desc')->paginate($limit,'default',$page);
         $pager = $model->pager;
         foreach ($rows as &$r) {
@@ -209,13 +213,14 @@ class MediaController extends ResourceController
 
     public function search(): ResponseInterface
     {
-        $query = (string)$this->request->getGet('q');
+        $req = service('request');
+        $query = (string)$req->getGet('q');
         if (empty($query)) {
             return $this->failValidationErrors('Tham số tìm kiếm "q" là bắt buộc');
         }
         
         $ownerId = service('auth')->user()['id'] ?? null;
-        $limit = (int)($this->request->getGet('limit') ?? 25);
+        $limit = (int)($req->getGet('limit') ?? 25);
         
         $results = $this->media->search($query, $ownerId, $limit);
         
@@ -243,7 +248,8 @@ class MediaController extends ResourceController
 
     public function move($id = null): ResponseInterface
     {
-        $folder = (string)$this->request->getPost('folder');
+        $req = service('request');
+        $folder = (string)$req->getPost('folder');
         if (empty($folder)) {
             return $this->failValidationErrors('Folder parameter is required');
         }
@@ -286,7 +292,8 @@ class MediaController extends ResourceController
 
     public function bulkDelete(): ResponseInterface
     {
-        $ids = $this->request->getPost('ids');
+        $req = service('request');
+        $ids = $req->getPost('ids');
         if (!is_array($ids) || empty($ids)) {
             return $this->failValidationErrors('IDs array is required');
         }

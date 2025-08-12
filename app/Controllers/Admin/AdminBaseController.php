@@ -68,7 +68,7 @@ class AdminBaseController extends Controller
         return view('admin/layout/main', $wrapperData);
     }
 
-    protected function paginate(Model|\CodeIgniter\Model $model, int $perPage = 20, string $group = 'default'): array
+    protected function paginate(\CodeIgniter\Model $model, int $perPage = 20, string $group = 'default'): array
     {
         $page = (int) (service('request')->getGet('page') ?? 1); if ($page < 1) $page = 1;
         $rows = $model->orderBy('id','desc')->paginate($perPage, $group, $page);

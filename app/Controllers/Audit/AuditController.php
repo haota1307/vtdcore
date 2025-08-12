@@ -9,8 +9,9 @@ class AuditController extends ResourceController
 
     public function index()
     {
-        $limit = (int)($this->request->getGet('limit') ?? 50); $limit = min(max($limit,1),200);
-        $page = (int)($this->request->getGet('page') ?? 1); $page = max($page,1);
+        $req = service('request');
+        $limit = (int)($req->getGet('limit') ?? 50); $limit = min(max($limit,1),200);
+        $page = (int)($req->getGet('page') ?? 1); $page = max($page,1);
         $model = new \App\Models\AuditLogModel();
         $rows = $model->orderBy('id','desc')->paginate($limit,'default',$page);
         $pager = $model->pager;

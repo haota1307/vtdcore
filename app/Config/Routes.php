@@ -122,6 +122,8 @@ $routes->group('admin', static function($routes){
 		$routes->get('media/upload', 'Admin\\MediaController::uploadForm', ['filter'=>'can:admin.media.manage']);
 		$routes->get('settings', 'Admin\\SettingsController::index', ['filter'=>'can:admin.settings.manage']);
 		$routes->get('audit', 'Admin\\AuditLogsController::index', ['filter'=>'can:admin.audit.view']);
+		// Test page: render arbitrary view under app/Views/pages via layout
+		$routes->get('test', 'Admin\\TestController::index');
 		$routes->get('logs', 'Admin\\AuditLogsController::index', ['filter'=>'can:admin.audit.view']);
 		
 		// Sidebar Demo Routes

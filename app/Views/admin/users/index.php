@@ -244,23 +244,23 @@
                                                 <button class="btn btn-sm btn-outline-warning" onclick="editUser(<?= (int)$u['id'] ?>)" data-bs-toggle="tooltip" title="Chỉnh sửa">
                                                     <i data-feather="edit" class="icon-xs"></i>
                                                 </button>
-                                                <div class="dropdown d-inline-block">
-                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                                <div class="dropdown d-inline-block action-dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle action-dropdown-toggle" type="button" id="dropdownMenuButton-<?= (int)$u['id'] ?>" data-bs-toggle="dropdown" aria-expanded="false" onclick="openDropdown(<?= (int)$u['id'] ?>)">
                                                         <i data-feather="more-horizontal" class="icon-xs"></i>
                                                     </button>
-                                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                        <li><a class="dropdown-item" href="#" onclick="toggleStatus(<?= (int)$u['id'] ?>)">
+                                                    <ul class="dropdown-menu dropdown-menu-end action-dropdown-menu" aria-labelledby="dropdownMenuButton-<?= (int)$u['id'] ?>">
+                                                        <li><a class="dropdown-item" href="#" onclick="toggleStatus(<?= (int)$u['id'] ?>); return false;">
                                                             <i data-feather="<?= ($u['status'] ?? 'active') === 'active' ? 'user-x' : 'user-check' ?>" class="icon-xs me-2"></i>
                                                             <?= ($u['status'] ?? 'active') === 'active' ? 'Vô hiệu hóa' : 'Kích hoạt' ?>
                                                         </a></li>
-                                                        <li><a class="dropdown-item" href="#" onclick="resetPassword(<?= (int)$u['id'] ?>)">
+                                                        <li><a class="dropdown-item" href="#" onclick="resetPassword(<?= (int)$u['id'] ?>); return false;">
                                                             <i data-feather="key" class="icon-xs me-2"></i> Đặt lại mật khẩu
                                                         </a></li>
-                                                                <li><hr class="dropdown-divider"></li>
-                                                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteUser(<?= (int)$u['id'] ?>)">
-                                                            <i data-feather="trash-2" class="icon-xs me-2"></i> Xóa
+                                                        <li><hr class="dropdown-divider"></li>
+                                                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteUser(<?= (int)$u['id'] ?>); return false;">
+                                                            <i data-feather="trash-2" class="icon-xs me-2"></i> Xóa tài khoản
                                                         </a></li>
-                                                            </ul>
+                                                    </ul>
                                                 </div>
                                                         </div>
                                                     </td>
@@ -485,10 +485,11 @@
     position: absolute;
     left: 12px;
     top: 50%;
-    transform: translateY(-50%);
     color: #6c757d;
     width: 18px;
     height: 18px;
+    display: block;
+    pointer-events: none;
 }
 
 /* Bảng người dùng */
@@ -590,15 +591,44 @@
     border-radius: 6px;
 }
 
+/* Dropdown styling */
+.action-dropdown {
+    position: relative;
+}
+
+.action-dropdown-toggle {
+    cursor: pointer;
+}
+
+.action-dropdown-menu {
+    position: absolute;
+    z-index: 1000;
+    display: none;
+    min-width: 10rem;
+    padding: 0.5rem 0;
+    text-align: left;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+}
+
+.action-dropdown-menu.show {
+    display: block;
+}
+
 /* Icons */
 .icon-xs {
     width: 16px;
     height: 16px;
+    vertical-align: middle;
 }
 
 .icon-sm {
     width: 18px;
     height: 18px;
+    vertical-align: middle;
 }
 
 /* Empty state */
@@ -763,6 +793,112 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Khởi tạo và đảm bảo dropdown hoạt động
+    function initializeDropdowns() {
+        // Kiểm tra xem Bootstrap có sẵn không
+        const hasBootstrap = typeof bootstrap !== 'undefined' && bootstrap.Dropdown;
+        
+        // Xóa tất cả các event listener cũ (nếu có)
+        if (hasBootstrap) {
+            document.querySelectorAll('.action-dropdown-toggle').forEach(btn => {
+                const oldInstance = bootstrap.Dropdown.getInstance(btn);
+                if (oldInstance) {
+                    oldInstance.dispose();
+                }
+            });
+        }
+        
+        // Thêm một phương thức trực tiếp để mở dropdown (dự phòng)
+        window.openDropdown = function(id) {
+            const dropdownToggle = document.getElementById('dropdownMenuButton-' + id);
+            if (!dropdownToggle) return;
+            
+            if (hasBootstrap) {
+                const dropdownInstance = new bootstrap.Dropdown(dropdownToggle);
+                dropdownInstance.show();
+            } else {
+                // Đóng tất cả dropdown khác
+                document.querySelectorAll('.action-dropdown-menu.show').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+                
+                // Mở dropdown hiện tại
+                const menu = dropdownToggle.nextElementSibling || 
+                             dropdownToggle.closest('.action-dropdown').querySelector('.action-dropdown-menu');
+                if (menu) {
+                    menu.classList.add('show');
+                    refreshFeatherIcons();
+                }
+            }
+        };
+        
+        // Khởi tạo lại tất cả dropdown
+        if (hasBootstrap) {
+            document.querySelectorAll('.action-dropdown-toggle').forEach(btn => {
+                new bootstrap.Dropdown(btn);
+            });
+            
+            // Đăng ký sự kiện khi dropdown được hiển thị để cập nhật icon
+            document.querySelectorAll('.action-dropdown').forEach(dropdown => {
+                dropdown.addEventListener('shown.bs.dropdown', function() {
+                    refreshFeatherIcons();
+                });
+            });
+        } else {
+            // Fallback với vanilla JS nếu không có Bootstrap
+            // Xóa event listener cũ nếu có
+            const oldClickHandler = window.dropdownClickHandler;
+            if (oldClickHandler) {
+                document.removeEventListener('click', oldClickHandler);
+            }
+            
+            // Tạo và gắn event listener mới
+            window.dropdownClickHandler = function(e) {
+                // Xử lý click trên toggle button hoặc các phần tử con của nó (như icon)
+                const toggle = e.target.closest('.action-buttons .dropdown-toggle');
+                if (!toggle) {
+                    // Đóng tất cả dropdown khi click ra ngoài
+                    document.querySelectorAll('.action-buttons .dropdown-menu.show').forEach(menu => {
+                        menu.classList.remove('show');
+                    });
+                    return;
+                }
+                
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Đóng tất cả dropdown khác
+                document.querySelectorAll('.action-buttons .dropdown-menu.show').forEach(menu => {
+                    if (menu !== toggle.nextElementSibling && menu !== toggle.parentElement.querySelector('.dropdown-menu')) {
+                        menu.classList.remove('show');
+                    }
+                });
+                
+                // Toggle dropdown hiện tại
+                const menu = toggle.nextElementSibling || toggle.parentElement.querySelector('.dropdown-menu');
+                if (menu) {
+                    menu.classList.toggle('show');
+                    if (menu.classList.contains('show')) {
+                        refreshFeatherIcons();
+                    }
+                }
+            };
+            
+            document.addEventListener('click', window.dropdownClickHandler);
+        }
+    }
+    
+    // Hàm cập nhật Feather icons
+    function refreshFeatherIcons() {
+        if (typeof feather !== 'undefined') {
+            setTimeout(() => {
+                feather.replace({ 'stroke-width': 1.5 });
+            }, 10);
+        }
+    }
+    
+    // Khởi tạo dropdown khi trang đã tải xong
+    initializeDropdowns();
 
 });
 
@@ -825,6 +961,9 @@ async function toggleStatus(id) {
     if (!confirm('Bạn có chắc chắn muốn thay đổi trạng thái của người dùng này?')) return;
     
     try {
+        // Hiển thị trạng thái đang xử lý
+        showNotification('Đang cập nhật trạng thái...', 'info');
+        
         const response = await fetch(`<?= admin_url('users') ?>/${id}/toggle`, {
             method: 'POST',
             headers: {
@@ -836,11 +975,14 @@ async function toggleStatus(id) {
             throw new Error('Không thể thay đổi trạng thái');
         }
         
-        showNotification('Cập nhật trạng thái thành công', 'success');
+        const result = await response.json();
+        const newStatus = result.status === 'active' ? 'Hoạt động' : 'Không hoạt động';
+        
+        showNotification(`Cập nhật trạng thái thành công: ${newStatus}`, 'success');
         setTimeout(() => location.reload(), 1000);
     } catch (error) {
         console.error('Error:', error);
-        showNotification('Không thể thay đổi trạng thái', 'error');
+        showNotification('Không thể thay đổi trạng thái: ' + (error.message || 'Lỗi không xác định'), 'error');
     }
 }
 
@@ -849,6 +991,9 @@ async function resetPassword(id) {
     if (!confirm('Bạn có chắc chắn muốn đặt lại mật khẩu cho người dùng này?')) return;
     
     try {
+        // Hiển thị trạng thái đang xử lý
+        showNotification('Đang đặt lại mật khẩu...', 'info');
+        
         const response = await fetch(`<?= admin_url('users') ?>/${id}/reset-password`, {
             method: 'POST',
             headers: {
@@ -861,18 +1006,153 @@ async function resetPassword(id) {
         }
         
         const result = await response.json();
-        showNotification(`Đặt lại mật khẩu thành công. Mật khẩu mới: ${result.new_password}`, 'success');
+        
+        // Tạo modal hiển thị mật khẩu mới
+        const modalHtml = `
+            <div class="modal fade" id="passwordResetModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Mật khẩu mới</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-success">
+                                <p class="mb-0">Đặt lại mật khẩu thành công!</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Mật khẩu mới:</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" value="${result.new_password}" id="newPasswordField" readonly>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="copyToClipboard('${result.new_password}')">
+                                        <i data-feather="copy" class="icon-xs"></i> Sao chép
+                                    </button>
+                                </div>
+                                <small class="text-muted mt-1 d-block">Vui lòng lưu lại mật khẩu này hoặc thông báo cho người dùng.</small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Thêm modal vào body nếu chưa tồn tại
+        if (!document.getElementById('passwordResetModal')) {
+            const modalContainer = document.createElement('div');
+            modalContainer.innerHTML = modalHtml;
+            document.body.appendChild(modalContainer);
+        } else {
+            document.getElementById('passwordResetModal').outerHTML = modalHtml;
+        }
+        
+        // Hiển thị modal
+        const resetModal = new bootstrap.Modal(document.getElementById('passwordResetModal'));
+        resetModal.show();
+        
+        // Cập nhật Feather icons trong modal
+        setTimeout(() => {
+            if (typeof feather !== 'undefined') {
+                feather.replace({ 'stroke-width': 1.5 });
+            }
+        }, 10);
+        
+        showNotification('Đặt lại mật khẩu thành công', 'success');
     } catch (error) {
         console.error('Error:', error);
-        showNotification('Không thể đặt lại mật khẩu', 'error');
+        showNotification('Không thể đặt lại mật khẩu: ' + (error.message || 'Lỗi không xác định'), 'error');
     }
 }
 
+// Hàm sao chép vào clipboard
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            showNotification('Đã sao chép mật khẩu vào clipboard', 'success');
+        })
+        .catch(err => {
+            console.error('Không thể sao chép: ', err);
+            showNotification('Không thể sao chép mật khẩu', 'error');
+        });
+}
+
 // Xóa người dùng
-function deleteUser(id) {
-    if (!confirm('Bạn có chắc chắn muốn xóa người dùng này? Hành động này không thể hoàn tác.')) return;
+async function deleteUser(id) {
+    // Hiển thị modal xác nhận xóa
+    const confirmModal = `
+        <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">Xác nhận xóa</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center mb-3">
+                            <i data-feather="alert-triangle" style="width: 50px; height: 50px; color: #dc3545;"></i>
+                        </div>
+                        <p class="mb-1">Bạn có chắc chắn muốn xóa người dùng này?</p>
+                        <p class="text-danger mb-0"><strong>Lưu ý:</strong> Hành động này không thể hoàn tác!</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                            <i data-feather="trash-2" class="icon-xs me-1"></i> Xóa
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
     
-    showNotification('Tính năng xóa người dùng đang được phát triển', 'info');
+    // Thêm modal vào body nếu chưa tồn tại
+    if (!document.getElementById('deleteConfirmModal')) {
+        const modalContainer = document.createElement('div');
+        modalContainer.innerHTML = confirmModal;
+        document.body.appendChild(modalContainer);
+    } else {
+        document.getElementById('deleteConfirmModal').outerHTML = confirmModal;
+    }
+    
+    // Hiển thị modal
+    const modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+    modal.show();
+    
+    // Cập nhật Feather icons trong modal
+    setTimeout(() => {
+        if (typeof feather !== 'undefined') {
+            feather.replace({ 'stroke-width': 1.5 });
+        }
+    }, 10);
+    
+    // Xử lý sự kiện khi người dùng xác nhận xóa
+    document.getElementById('confirmDeleteBtn').onclick = async function() {
+        try {
+            // Đóng modal xác nhận
+            modal.hide();
+            
+            // Hiển thị trạng thái đang xử lý
+            showNotification('Đang xóa người dùng...', 'info');
+            
+            const response = await fetch(`<?= admin_url('users') ?>/${id}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                throw new Error(err.error || 'Không thể xóa người dùng');
+            }
+            
+            showNotification('Xóa tài khoản thành công', 'success');
+            setTimeout(() => location.reload(), 1000);
+        } catch (error) {
+            console.error(error);
+            showNotification(error.message || 'Không thể xóa người dùng', 'error');
+        }
+    };
 }
 
 // Submit form chỉnh sửa người dùng
